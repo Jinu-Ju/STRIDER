@@ -40,8 +40,7 @@ window.STRIDER_CONFIG = {
   video: {
     // Use "youtube" for a hosted video or "mp4" for a direct video URL/file.
     provider: "youtube",
-    // Paste an 11-character video ID or a regular YouTube share/watch URL.
-    youtubeId: "",
+    youtubeId: "https://youtu.be/ldRSqi8bl2Q",
     src: "",
     mimeType: "video/mp4",
     poster: "./assets/images/flight.webp",
