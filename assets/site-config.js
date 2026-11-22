@@ -10,6 +10,7 @@ window.STRIDER_CONFIG = {
   // Example: [{ name: "Author Name", url: "https://example.edu/", affiliation: "1" }]
   affiliations: [],
   // Example: ["1. Department, University"]
+
   publication: {
     status: "Accepted",
     venue: "IEEE Robotics and Automation Letters",
@@ -25,6 +26,7 @@ window.STRIDER_CONFIG = {
     labUrl: "",
     contactUrl: ""
   },
+
   release: {
     // Set to "available" after the curated simulation has been released.
     status: "in-preparation",
@@ -37,6 +39,7 @@ window.STRIDER_CONFIG = {
     // Optional short, silent MP4 loop. Leave empty to display the photograph.
     videoSrc: ""
   },
+
   video: {
     // Use "youtube" for a hosted video or "mp4" for a direct video URL/file.
     provider: "youtube",
@@ -44,11 +47,17 @@ window.STRIDER_CONFIG = {
     src: "",
     mimeType: "video/mp4",
     poster: "./assets/images/flight.webp",
+
     // Chapter times are seconds from the start. Null hides the chapter.
     chapters: [
-      { label: "Thrust redistribution", start: null },
-      { label: "Payload transportation", start: null },
-      { label: "Controller comparison", start: null }
+      {
+        label: "Saturation mitigation validation",
+        start: 131
+      },
+      {
+        label: "Controller comparison",
+        start: 233
+      }
     ]
   },
 
@@ -68,25 +77,50 @@ window.STRIDER_CONFIG = {
   // These tabs describe the controllers; they do not run a browser simulation.
   controllers: [
     {
-      id: "conventional", name: "Conventional", kicker: "Fixed geometry",
+      id: "conventional",
+      name: "Conventional",
+      kicker: "Fixed geometry",
       description: "Keeps the rotor positions fixed and uses the baseline flight controller. The required moment is handled through the fixed thrust-allocation geometry.",
-      properties: [["Rotor-position morphing", "Disabled"], ["Attitude-reference correction", "Disabled"], ["Morphing strategy", "Fixed rotor positions"]]
+      properties: [
+        ["Rotor-position morphing", "Disabled"],
+        ["Attitude-reference correction", "Disabled"],
+        ["Morphing strategy", "Fixed rotor positions"]
+      ]
     },
     {
-      id: "reference", name: "Reference method [15]", kicker: "Gradient-based morphing",
+      id: "reference",
+      name: "Reference method [15]",
+      kicker: "Gradient-based morphing",
       description: "Adapts the rotor configuration using a gradient-based morphology optimization baseline, without the proposed attitude-reference correction.",
-      properties: [["Rotor-position morphing", "Enabled"], ["Attitude-reference correction", "Disabled"], ["Morphing strategy", "Gradient-based optimization"]]
+      properties: [
+        ["Rotor-position morphing", "Enabled"],
+        ["Attitude-reference correction", "Disabled"],
+        ["Morphing strategy", "Gradient-based optimization"]
+      ]
     },
     {
-      id: "morphing-only", name: "Morphing-Only", kicker: "NMPC ablation",
+      id: "morphing-only",
+      name: "Morphing-Only",
+      kicker: "NMPC ablation",
       description: "Uses NMPC to optimize rotor-position commands while keeping attitude-reference correction disabled. This isolates the contribution of predictive rotor-position morphing.",
-      properties: [["Rotor-position morphing", "Enabled"], ["Attitude-reference correction", "Disabled"], ["Morphing strategy", "Predictive optimization"]]
+      properties: [
+        ["Rotor-position morphing", "Enabled"],
+        ["Attitude-reference correction", "Disabled"],
+        ["Morphing strategy", "Predictive optimization"]
+      ]
     },
     {
-      id: "proposed", name: "Proposed", kicker: "Full formulation",
+      id: "proposed",
+      name: "Proposed",
+      kicker: "Full formulation",
       description: "Jointly optimizes rotor-position commands and attitude-reference correction within the NMPC prediction horizon, accounting for the coupled attitude and morphing response.",
-      properties: [["Rotor-position morphing", "Enabled"], ["Attitude-reference correction", "Enabled"], ["Morphing strategy", "Joint predictive optimization"]]
+      properties: [
+        ["Rotor-position morphing", "Enabled"],
+        ["Attitude-reference correction", "Enabled"],
+        ["Morphing strategy", "Joint predictive optimization"]
+      ]
     }
   ],
+
   referenceNote: "Reference method: gradient-based morphology optimization, based on C. Kim et al., ‘A morphing quadrotor that can optimize morphology for transportation,’ IROS 2021."
 };
