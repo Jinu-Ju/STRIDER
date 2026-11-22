@@ -3,7 +3,7 @@ window.STRIDER_CONFIG = {
   projectName: "STRIDER",
   headline: "Morph to Survive",
   subtitle: "Feasibility-Aware MPC for Rotor Thrust Saturation Mitigation in Morphable Multirotors",
-  siteUrl: "https://milkomedia.github.io/strider/",
+  siteUrl: "https://milkomedia.github.io/STRIDER/",
 
   // Leave unconfirmed metadata empty. No placeholder names are published.
   authors: [],
