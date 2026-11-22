@@ -212,3 +212,7 @@ dialog p { margin: 15px 0 0; color: var(--muted); font-size: .9rem; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; }
 }
+#video-status,
+#external-video-link {
+  display: none !important;
+}
