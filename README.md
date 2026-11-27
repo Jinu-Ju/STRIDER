@@ -16,7 +16,7 @@ These repositories serve separate purposes:
 | Published website | [milkomedia.github.io/STRIDER/](https://milkomedia.github.io/STRIDER/) | The research project page served by GitHub Pages |
 | Simulation repository | [Milkomedia/STRIDER_MPC_MuJoCo](https://github.com/Milkomedia/STRIDER_MPC_MuJoCo) | MuJoCo model, controllers, execution code, plotting UI, and installation instructions |
 
-The website links visitors to the simulation repository through its **Simulation code** and **View repository** buttons. Updating this website does not change the simulation code. The controller tabs on this page display descriptions; the MuJoCo simulation and plotting UI run locally after downloading the separate simulation repository.
+The website links visitors to the simulation repository through its **Simulation code** and **View repository** buttons. Updating this website does not change the simulation code. The controller tabs on this page display prerecorded videos and concise descriptions; the MuJoCo simulation and plotting UI run locally after downloading the separate simulation repository.
 
 Use the uppercase **STRIDER** repository name and **/STRIDER/** URL consistently, including in the paper. All local website assets use relative paths.
 
@@ -26,12 +26,12 @@ Use the uppercase **STRIDER** repository name and **/STRIDER/** URL consistently
 - An RA-L Accepted label, as requested for the publication website.
 - Actual flight and platform photographs.
 - Descriptions of Conventional, Reference method [15], Morphing-Only, and Proposed controllers.
-- MuJoCo and plotting UI development screenshots with an enlargement dialog.
+- MuJoCo and controller simulation videos, plus a plotting UI screenshot with an enlargement dialog.
 - YouTube or direct MP4 playback with optional chapter buttons.
 - Configurable publication links, authors, affiliations, DOI, and BibTeX.
 - Responsive layouts, keyboard-accessible tabs, and reduced-motion support.
 
-Unconfirmed author, affiliation, DOI, paper, citation, and video fields remain empty. The page hides unavailable links or marks resources as forthcoming. Confirm the final title and publication status before release. The full manuscript and supplementary video are not bundled.
+The six authors, five affiliations, co-first authors, corresponding author, and accepted-manuscript citation follow `RAL_strider-6.pdf`. Compact institution names appear below the title; full departments and the research-time affiliation note are available under **Author affiliations**. BibTeX is expandable. The paper URL and DOI remain empty until available; the manuscript PDF is not bundled. Existing video files and chapter times are preserved.
 
 The code link currently points to the development repository. Once the curated four-controller simulation is public, update its URL if necessary and set `release.status` to `"available"`. The included screenshots are development previews, not a new quantitative comparison.
 
@@ -48,12 +48,12 @@ The `Milkomedia/STRIDER` repository already exists. Use one of the following met
 5. Commit the changes to the branch used by GitHub Pages.
 6. Wait for the Pages deployment to finish, then refresh https://milkomedia.github.io/STRIDER/.
 
-Keep `index.html` at the repository root. Include `.nojekyll` and `.gitignore`; on macOS, press **Command+Shift+.** in Finder to show hidden files. Preserve any unrelated files already present in the repository.
+Keep `index.html` at the repository root. Preserve any unrelated files and existing GitHub Pages settings in the repository.
 
 Suggested commit message:
 
 ```text
-Use uppercase STRIDER URL and English documentation
+Add authors and simplify project-page copy
 ```
 
 ### Git command line
@@ -72,8 +72,8 @@ After copying the updated website files into the clone:
 ```bash
 git status
 git diff
-git add index.html assets README.md ASSETS.md .nojekyll .gitignore
-git commit -m "Use uppercase STRIDER URL and English documentation"
+git add index.html assets README.md ASSETS.md
+git commit -m "Add authors and simplify project-page copy"
 git push
 ```
 
@@ -111,8 +111,9 @@ Most content is configured in `assets/site-config.js`.
 | --- | --- |
 | `siteUrl` | Canonical project URL: `https://milkomedia.github.io/STRIDER/` |
 | `headline`, `subtitle` | Final paper title |
-| `authors`, `affiliations` | Author order, personal links, and affiliations |
-| `publication.status`, `publication.venue` | Publication status and venue |
+| `authors`, `affiliations` | Author order, institution numbers, compact names, and full department details |
+| `authorNotes`, `researchAffiliationNote` | Contribution markers and research-time affiliations |
+| `publication.status`, `publication.venue`, `publication.year`, `publication.message` | Publication status, venue, year, and short message |
 | `publication.paperUrl` | Public paper URL or relative PDF path |
 | `publication.doiUrl` | DOI URL beginning with `https://doi.org/` |
 | `publication.citationText`, `publication.bibtex` | Confirmed bibliographic information |
@@ -125,14 +126,7 @@ Most content is configured in `assets/site-config.js`.
 | `gallery.scene`, `gallery.plots` | Screenshots, alt text, and captions |
 | `controllers`, `referenceNote` | Controller descriptions and reference details |
 
-Leave unknown values empty. Example author syntax, using fictional placeholder text only:
-
-```javascript
-authors: [
-  { name: "Author Name", url: "https://example.edu/", affiliation: "1" }
-],
-affiliations: ["1. Department, University"],
-```
+Leave unknown publication URLs empty. Author objects use `affiliation` for the institution number, `equalContribution: true` for `*`, and `corresponding: true` for `†`. Each affiliation object provides `id`, `name`, and `detail`. Optional author `url` values may link to confirmed personal pages.
 
 Use a JavaScript template literal for multiline BibTeX. The citation panel and copy button appear only when BibTeX is supplied. Keep the final title and metadata in `index.html` consistent with the configuration for search engines and visitors with JavaScript disabled.
 

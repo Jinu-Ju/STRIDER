@@ -22,10 +22,8 @@
     if (url) link.href = url;
   }
 
-  const title = [config.headline, config.subtitle].filter(Boolean).join(": ");
   text("hero-heading", config.headline);
   text("paper-subtitle", config.subtitle);
-  text("citation-title", title);
   if (config.headline) {
     document.title = `${config.projectName || "STRIDER"} — ${config.headline}`;
     document.querySelector('meta[property="og:title"]').content = document.title;
@@ -43,33 +41,41 @@
   optionalLink("contact-link", links.contactUrl, true);
   optionalLink("lab-link", links.labUrl);
   const authors = Array.isArray(config.authors) ? config.authors : [];
+  byId("authors").replaceChildren();
   for (const author of authors) {
     if (!author.name) continue;
     const url = safeUrl(author.url);
     const item = document.createElement(url ? "a" : "span");
     item.textContent = author.name;
     if (url) { item.href = url; item.target = "_blank"; item.rel = "noopener"; }
-    if (author.affiliation) {
+    const marker = [author.affiliation, author.equalContribution ? "*" : "", author.corresponding ? "†" : ""].filter(Boolean).join("");
+    if (marker) {
       const sup = document.createElement("sup");
-      sup.textContent = author.affiliation;
+      sup.textContent = marker;
       item.append(sup);
     }
     byId("authors").append(item);
   }
   byId("authors").hidden = !byId("authors").children.length;
+  byId("affiliations").replaceChildren();
   for (const affiliation of config.affiliations || []) {
-    const p = document.createElement("p");
-    p.textContent = affiliation;
-    byId("affiliations").append(p);
+    const item = document.createElement("span");
+    if (typeof affiliation === "string") {
+      item.textContent = affiliation;
+    } else {
+      const sup = document.createElement("sup");
+      sup.textContent = affiliation.id;
+      item.append(sup, document.createTextNode(affiliation.name));
+    }
+    byId("affiliations").append(item);
   }
   byId("affiliations").hidden = !byId("affiliations").children.length;
+  text("author-notes", config.authorNotes);
+  byId("author-notes").hidden = !config.authorNotes;
 
   const publication = config.publication || {};
-  text("publication-status", publication.status);
-  text("publication-venue", publication.venue);
-  const paperUrl = safeUrl(publication.paperUrl);
-  optionalLink("published-paper-link", paperUrl);
-  optionalLink("doi-link", publication.doiUrl);
+  text("publication-venue", [publication.venue, publication.year].filter(Boolean).join(" · "));
+  const paperUrl = safeUrl(publication.paperUrl) || safeUrl(publication.doiUrl);
   if (paperUrl) {
     document.querySelectorAll("[data-paper-link]").forEach((link) => {
       link.href = paperUrl;
@@ -78,68 +84,46 @@
       link.setAttribute("aria-label", "Read the paper");
     });
     document.querySelectorAll("[data-paper-note]").forEach((note) => { note.hidden = true; });
-    text("publication-message", `${publication.status || "Accepted"} · ${publication.venue || "IEEE Robotics and Automation Letters"}. Read the paper for the complete method and experimental evaluation.`);
-  }
-  const hasCitation = Boolean(publication.citationText || publication.bibtex);
-  byId("citation-pending").hidden = hasCitation;
-  if (publication.citationText) {
-    text("citation-text", publication.citationText);
-    byId("citation-text").hidden = false;
   }
   if (publication.bibtex) {
-    byId("bibtex-container").hidden = false;
-    byId("bibtex-code").textContent = publication.bibtex;
+    byId("bibtex-code").textContent = publication.bibtex.trim();
   }
   byId("copy-citation").addEventListener("click", async () => {
+    byId("copy-status").hidden = false;
     try {
-      await navigator.clipboard.writeText(publication.bibtex);
-      text("copy-status", "Citation copied.");
+      await navigator.clipboard.writeText(byId("bibtex-code").textContent.trim());
+      text("copy-status", "BibTeX copied.");
     } catch (_) {
       const selection = window.getSelection();
       const range = document.createRange();
       range.selectNodeContents(byId("bibtex-code"));
       selection.removeAllRanges();
       selection.addRange(range);
-      text("copy-status", "Citation selected. Press Ctrl+C or Command+C to copy.");
+      text("copy-status", "BibTeX selected. Press Ctrl+C or Command+C to copy.");
     }
   });
   const release = config.release || {};
   text("release-note", release.status === "available" ? release.availableText : release.preparationText);
-  if (release.status === "available") {
-    document.querySelector(".controllers .section-intro").textContent = "Explore the control strategies included in the simulation release.";
-  }
 
   const hero = config.hero || {};
   const heroImage = safeUrl(hero.image);
-  if (heroImage) byId("hero-image").src = heroImage;
-  const heroVideoSrc = safeUrl(hero.videoSrc);
-  if (heroVideoSrc) {
-    const video = document.createElement("video");
-    video.src = heroVideoSrc;
-    video.poster = heroImage || "./assets/images/flight.webp";
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.preload = "none";
-    video.setAttribute("aria-label", "STRIDER flight teaser");
-    const pause = document.createElement("button");
-    pause.type = "button";
-    pause.className = "hero-pause";
-    pause.textContent = "Play teaser";
-    const sync = () => { pause.textContent = video.paused ? "Play teaser" : "Pause teaser"; };
-    video.addEventListener("play", sync);
-    video.addEventListener("pause", sync);
-    pause.addEventListener("click", () => {
-      if (video.paused) video.play().catch(sync); else video.pause();
-    });
-    video.addEventListener("error", () => {
-      video.hidden = true;
-      pause.hidden = true;
-      byId("hero-image").hidden = false;
-    });
-    byId("hero-image").hidden = true;
-    byId("hero-media").append(video, pause);
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) video.play().catch(sync);
+  const image = byId("hero-image");
+  const video = byId("hero-video");
+  if (heroImage) image.src = heroImage;
+  if (video) {
+    const heroVideoSrc = safeUrl(hero.videoSrc);
+    if (heroVideoSrc && video.getAttribute("src") !== heroVideoSrc) {
+      video.src = heroVideoSrc;
+    }
+    const fallback = () => { video.hidden = true; image.hidden = false; };
+    video.addEventListener("error", fallback);
+    if (video.error) fallback();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      video.autoplay = false;
+      video.pause();
+    } else if (!video.hidden) {
+      video.play().catch(() => { /* Native controls allow manual playback. */ });
+    }
   }
 
   // A full URL is accepted so the owner can paste a YouTube share link.
@@ -261,12 +245,44 @@
   }
   const gallery = config.gallery || {};
   const galleryTabs = document.querySelector(".gallery-tabs");
+  const simulationVideo = byId("simulation-video");
+  const simulationImageButton = byId("image-zoom");
+  let sceneVisible = false;
+  function syncSimulationPlayback() {
+    if (!simulationVideo.hidden && sceneVisible) {
+      simulationVideo.play().catch(() => {});
+    } else {
+      simulationVideo.pause();
+    }
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      sceneVisible = entry.isIntersecting;
+      syncSimulationPlayback();
+    }, { threshold: 0.2 }).observe(byId("gallery-panel"));
+  } else {
+    sceneVisible = true;
+  }
+  simulationVideo.addEventListener("error", () => {
+    simulationVideo.hidden = true;
+    simulationImageButton.hidden = false;
+  });
   function selectGallery(tab) {
     const item = gallery[tab.dataset.gallery];
     if (!item || !safeUrl(item.src)) return;
     updateTabs(galleryTabs, tab);
     byId("simulation-image").src = item.src;
     byId("simulation-image").alt = item.alt;
+    const videoSrc = safeUrl(item.videoSrc);
+    simulationVideo.hidden = !videoSrc;
+    simulationImageButton.hidden = Boolean(videoSrc);
+    if (videoSrc) {
+      simulationVideo.poster = item.src;
+      if (simulationVideo.getAttribute("src") !== item.videoSrc) {
+        simulationVideo.src = item.videoSrc;
+      }
+    }
+    syncSimulationPlayback();
     text("simulation-caption", item.caption);
     byId("gallery-panel").setAttribute("aria-labelledby", tab.id);
     byId("image-zoom").setAttribute("aria-label", `Enlarge the ${tab.textContent} screenshot`);
@@ -290,11 +306,54 @@
 
   const controllerTabs = byId("controller-tabs");
   const controllers = Array.isArray(config.controllers) ? config.controllers : [];
+  const controllerPanel = byId("controller-panel");
+  const controllerMedia = byId("controller-media");
+  const controllerVideo = byId("controller-video");
+  const controllerVideoStatus = byId("controller-video-status");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let controllerVisible = !("IntersectionObserver" in window);
+  function syncControllerPlayback() {
+    if (controllerMedia.hidden || !controllerVisible || document.hidden) {
+      controllerVideo.pause();
+    } else if (!reducedMotion.matches) {
+      controllerVideo.play().catch(() => {});
+    }
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      controllerVisible = entry.isIntersecting;
+      syncControllerPlayback();
+    }, { threshold: 0.2 }).observe(controllerVideo);
+  }
+  document.addEventListener("visibilitychange", syncControllerPlayback);
+  reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches) controllerVideo.pause();
+    else syncControllerPlayback();
+  });
+  controllerVideo.addEventListener("error", () => {
+    controllerVideoStatus.hidden = false;
+  });
   function selectController(tab) {
     const controller = controllers[Number(tab.dataset.index)];
     if (!controller) return;
     updateTabs(controllerTabs, tab);
-    byId("controller-panel").setAttribute("aria-labelledby", tab.id);
+    byId("reference-note").hidden = controller.id !== "reference";
+    controllerPanel.setAttribute("aria-labelledby", tab.id);
+    const videoSrc = safeUrl(controller.videoSrc);
+    controllerPanel.classList.toggle("has-controller-video", Boolean(videoSrc));
+    controllerMedia.hidden = !videoSrc;
+    controllerVideo.setAttribute("aria-label", `${controller.name} simulation video`);
+    if (videoSrc && controllerVideo.getAttribute("src") !== videoSrc) {
+      controllerVideo.pause();
+      controllerVideoStatus.hidden = true;
+      controllerVideo.src = videoSrc;
+      controllerVideo.load();
+    } else if (!videoSrc) {
+      controllerVideo.pause();
+      controllerVideo.removeAttribute("src");
+      controllerVideo.load();
+    }
+    syncControllerPlayback();
     text("controller-kicker", controller.kicker);
     text("controller-name", controller.name);
     text("controller-description", controller.description);

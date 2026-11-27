@@ -5,39 +5,58 @@ window.STRIDER_CONFIG = {
   subtitle: "Feasibility-Aware MPC for Rotor Thrust Saturation Mitigation in Morphable Multirotors",
   siteUrl: "https://milkomedia.github.io/STRIDER/",
 
-  // Leave unconfirmed metadata empty. No placeholder names are published.
-  authors: [],
-  // Example: [{ name: "Author Name", url: "https://example.edu/", affiliation: "1" }]
-  affiliations: [],
-  // Example: ["1. Department, University"]
+  // Author order, affiliations, and contribution notes follow the manuscript.
+  authors: [
+    { name: "Jinu Ju", affiliation: "1", equalContribution: true },
+    { name: "Dongjae Lee", affiliation: "2", equalContribution: true },
+    { name: "Hanryung Shin", affiliation: "3" },
+    { name: "Sunyoung Kong", affiliation: "4" },
+    { name: "Youngjun Kim", affiliation: "5" },
+    { name: "Seung Jae Lee", affiliation: "5", corresponding: true }
+  ],
+  affiliations: [
+    { id: "1", name: "POSTECH", detail: "Department of Mechanical Engineering, Pohang University of Science and Technology (POSTECH), Pohang, Republic of Korea." },
+    { id: "2", name: "Kyung Hee University", detail: "School of Mechanical Engineering, Kyung Hee University, Yongin, Republic of Korea." },
+    { id: "3", name: "KAIST", detail: "Robotics Program, Korea Advanced Institute of Science and Technology (KAIST), Daejeon, Republic of Korea." },
+    { id: "4", name: "Rainbow Robotics", detail: "Rainbow Robotics, Sejong, Republic of Korea." },
+    { id: "5", name: "SeoulTech", detail: "Intelligent Robotics Engineering Program, School of Mechanical System Engineering, Seoul National University of Science and Technology (SeoulTech), Seoul, Republic of Korea." }
+  ],
+  authorNotes: "* Co-first authors · † Corresponding author",
+  researchAffiliationNote: "Jinu Ju, Hanryung Shin, and Sunyoung Kong were also with the Department of Mechanical System Design Engineering, SeoulTech, when this work was conducted.",
 
   publication: {
     status: "Accepted",
     venue: "IEEE Robotics and Automation Letters",
+    year: "2026",
     paperUrl: "",
     doiUrl: "",
-    citationText: "",
-    bibtex: ""
+    // Provisional accepted-manuscript citation; update from IEEE when available.
+    bibtex: `@article{ju2026morph,
+  title = {Morph to Survive: Feasibility-Aware {MPC} for Rotor Thrust Saturation Mitigation in Morphable Multirotors},
+  author = {Ju, Jinu and Lee, Dongjae and Shin, Hanryung and Kong, Sunyoung and Kim, Youngjun and Lee, Seung Jae},
+  journal = {IEEE Robotics and Automation Letters},
+  year = {2026},
+  note = {Accepted for publication, November 2026}
+}`
   },
 
   links: {
     codeUrl: "https://github.com/Milkomedia/STRIDER_MPC_MuJoCo",
     documentationUrl: "",
     labUrl: "",
-    contactUrl: ""
+    contactUrl: "mailto:seungjae_lee@seoultech.ac.kr"
   },
 
   release: {
     // Set to "available" after the curated simulation has been released.
     status: "in-preparation",
-    preparationText: "The curated simulation release is in preparation. The linked repository currently contains the development version.",
-    availableText: "Run the MuJoCo simulation locally and inspect the response with the plotting UI."
+    preparationText: "Development code available; curated release in preparation.",
+    availableText: "Simulation code and plotting UI available."
   },
 
   hero: {
     image: "./assets/images/flight.webp",
-    // Optional short, silent MP4 loop. Leave empty to display the photograph.
-    videoSrc: ""
+    videoSrc: "./assets/videos/strider-teaser.mp4"
   },
 
   video: {
@@ -51,11 +70,11 @@ window.STRIDER_CONFIG = {
     // Chapter times are seconds from the start. Null hides the chapter.
     chapters: [
       {
-        label: "Saturation mitigation validation",
+        label: "Experiment 1. Saturation mitigation validation",
         start: 131
       },
       {
-        label: "Controller comparison",
+        label: "Experiment 2. Controller comparison",
         start: 233
       }
     ]
@@ -64,63 +83,64 @@ window.STRIDER_CONFIG = {
   gallery: {
     scene: {
       src: "./assets/images/simulation.webp",
+      videoSrc: "./assets/videos/mujoco-scene.mp4?v=crop1",
       alt: "MuJoCo development screenshot showing the STRIDER model carrying an offset payload.",
-      caption: "MuJoCo development preview from the current repository."
+      caption: "MuJoCo simulation preview."
     },
     plots: {
       src: "./assets/images/plot-ui.webp",
       alt: "STRIDER plotting UI with position, attitude, torque, rotor thrust, morphing, and solver time histories.",
-      caption: "Plotting UI development preview from the current repository."
+      caption: "Motion, rotor thrusts, morphing states, and solver time."
     }
   },
 
-  // These tabs describe the controllers; they do not run a browser simulation.
+  // Each tab shows a prerecorded simulation and its controller description.
   controllers: [
     {
       id: "conventional",
+      videoSrc: "./assets/videos/controller-conventional.mp4?v=crop1",
       name: "Conventional",
       kicker: "Fixed geometry",
-      description: "Keeps the rotor positions fixed and uses the baseline flight controller. The required moment is handled through the fixed thrust-allocation geometry.",
+      description: "Fixed rotor geometry with no attitude-reference correction.",
       properties: [
         ["Rotor-position morphing", "Disabled"],
-        ["Attitude-reference correction", "Disabled"],
-        ["Morphing strategy", "Fixed rotor positions"]
+        ["Attitude-reference correction", "Disabled"]
       ]
     },
     {
       id: "reference",
+      videoSrc: "./assets/videos/controller-reference.mp4?v=crop1",
       name: "Reference method [15]",
       kicker: "Gradient-based morphing",
-      description: "Adapts the rotor configuration using a gradient-based morphology optimization baseline, without the proposed attitude-reference correction.",
+      description: "Gradient-based rotor-position optimization, without attitude-reference correction.",
       properties: [
         ["Rotor-position morphing", "Enabled"],
-        ["Attitude-reference correction", "Disabled"],
-        ["Morphing strategy", "Gradient-based optimization"]
+        ["Attitude-reference correction", "Disabled"]
       ]
     },
     {
       id: "morphing-only",
+      videoSrc: "./assets/videos/controller-morphing-only.mp4?v=crop1",
       name: "Morphing-Only",
       kicker: "NMPC ablation",
-      description: "Uses NMPC to optimize rotor-position commands while keeping attitude-reference correction disabled. This isolates the contribution of predictive rotor-position morphing.",
+      description: "NMPC optimizes rotor positions with attitude-reference correction disabled.",
       properties: [
         ["Rotor-position morphing", "Enabled"],
-        ["Attitude-reference correction", "Disabled"],
-        ["Morphing strategy", "Predictive optimization"]
+        ["Attitude-reference correction", "Disabled"]
       ]
     },
     {
       id: "proposed",
+      videoSrc: "./assets/videos/controller-proposed.mp4?v=crop1",
       name: "Proposed",
       kicker: "Full formulation",
-      description: "Jointly optimizes rotor-position commands and attitude-reference correction within the NMPC prediction horizon, accounting for the coupled attitude and morphing response.",
+      description: "NMPC jointly optimizes rotor-position morphing and attitude-reference correction.",
       properties: [
         ["Rotor-position morphing", "Enabled"],
-        ["Attitude-reference correction", "Enabled"],
-        ["Morphing strategy", "Joint predictive optimization"]
+        ["Attitude-reference correction", "Enabled"]
       ]
     }
   ],
 
-  referenceNote: "Reference method: gradient-based morphology optimization, based on C. Kim et al., ‘A morphing quadrotor that can optimize morphology for transportation,’ IROS 2021."
+  referenceNote: "[15] C. Kim et al., ‘A morphing quadrotor that can optimize morphology for transportation,’ IROS 2021."
 };

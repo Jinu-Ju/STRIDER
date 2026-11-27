@@ -6,6 +6,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="STRIDER: feasibility-aware model predictive control for rotor thrust saturation mitigation in morphable multirotors. Flight experiments and a MuJoCo simulation release.">
   <meta name="theme-color" content="#142333">
+  <meta name="author" content="Jinu Ju, Dongjae Lee, Hanryung Shin, Sunyoung Kong, Youngjun Kim, Seung Jae Lee">
   <meta property="og:type" content="website">
   <meta property="og:title" content="STRIDER — Morph to Survive">
   <meta property="og:description" content="Coordinating rotor-position morphing and attitude-reference correction for off-center payload transportation.">
@@ -14,9 +15,9 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://milkomedia.github.io/STRIDER/">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./assets/styles.css">
-  <script src="./assets/site-config.js" defer></script>
-  <script src="./assets/app.js" defer></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=bibtex1">
+  <script src="./assets/site-config.js?v=bibtex1" defer></script>
+  <script src="./assets/app.js?v=bibtex1" defer></script>
   <title>STRIDER — Morph to Survive</title>
 </head>
 <body>
@@ -28,7 +29,7 @@
         STRIDER
       </a>
       <nav aria-label="Main navigation">
-        <a href="#overview">Overview</a><a href="#video">Video</a><a href="#simulation">Simulation</a><a href="#publication">Paper</a>
+        <a href="#overview">Overview</a><a href="#video">Video</a><a href="#simulation">Simulation</a><a href="#publication">BibTeX</a>
       </nav>
       <a class="header-code" data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -36,12 +37,17 @@
 
   <main id="main">
     <section class="hero container" aria-labelledby="hero-heading">
-      <p class="eyebrow">Morphable multirotors · Predictive control</p>
+      <p class="eyebrow">STRIDER</p>
       <h1 id="hero-heading">Morph to Survive</h1>
       <p class="paper-subtitle" id="paper-subtitle">Feasibility-Aware MPC for Rotor Thrust Saturation Mitigation in Morphable Multirotors</p>
-      <div id="authors" class="authors" hidden></div>
-      <div id="affiliations" class="affiliations" hidden></div>
-      <p class="publication-line"><span class="venue-badge" id="publication-status">Accepted</span><span id="publication-venue">IEEE Robotics and Automation Letters</span></p>
+      <div id="authors" class="authors">
+        <span>Jinu Ju<sup>1*</sup></span><span>Dongjae Lee<sup>2*</sup></span><span>Hanryung Shin<sup>3</sup></span><span>Sunyoung Kong<sup>4</sup></span><span>Youngjun Kim<sup>5</sup></span><span>Seung Jae Lee<sup>5†</sup></span>
+      </div>
+      <div id="affiliations" class="affiliations">
+        <span><sup>1</sup>POSTECH</span><span><sup>2</sup>Kyung Hee University</span><span><sup>3</sup>KAIST</span><span><sup>4</sup>Rainbow Robotics</span><span><sup>5</sup>SeoulTech</span>
+      </div>
+      <p id="author-notes" class="author-notes">* Co-first authors · † Corresponding author</p>
+      <p class="publication-line"><span id="publication-venue">IEEE Robotics and Automation Letters · 2026</span></p>
       <div class="button-row hero-actions">
         <a class="button primary" data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener">Simulation code</a>
         <a class="button secondary" href="#video">Experiment video</a>
@@ -49,40 +55,39 @@
       </div>
       <figure class="hero-figure">
         <div class="hero-media" id="hero-media">
-          <img id="hero-image" src="./assets/images/flight.webp" width="2345" height="893" alt="STRIDER flying next to a shelf during an off-center payload handling experiment." fetchpriority="high">
+          <img id="hero-image" src="./assets/images/flight.webp" width="2345" height="893" alt="STRIDER flying next to a shelf during an off-center payload handling experiment." hidden>
+          <video id="hero-video" src="./assets/videos/strider-teaser.mp4" autoplay muted loop playsinline preload="auto" aria-label="STRIDER flight teaser" controls></video>
         </div>
-        <figcaption><span class="figure-label">STRIDER in flight</span><span>Reconfiguring rotor positions to redistribute thrust loads.</span></figcaption>
       </figure>
-      <p class="hero-summary">Coordinating <strong>rotor-position morphing</strong> and <strong>attitude-reference correction</strong> to mitigate rotor thrust saturation during off-center payload transportation.</p>
+      <p class="hero-summary"><strong>Morphing</strong> and <strong>attitude-reference correction</strong> mitigate rotor saturation under off-center loading.</p>
     </section>
 
     <section class="container section overview" id="overview" aria-labelledby="overview-heading">
       <div class="section-heading"><p class="eyebrow">The challenge</p><h2 id="overview-heading">Enough total thrust.<br>Uneven rotor loads.</h2></div>
       <div class="overview-copy">
-        <p>An off-center payload adds a moment that must be balanced in flight. Even when the total thrust capacity is sufficient, the required thrust can concentrate on a subset of rotors and drive them into saturation.</p>
-        <p>STRIDER changes the rotor positions to reshape the thrust-allocation geometry. A nonlinear model predictive controller coordinates this motion with attitude-reference correction, accounting for individual thrust limits and the finite response of the morphing mechanism.</p>
+        <p>An off-center payload can overload individual rotors despite sufficient total thrust. STRIDER reshapes the rotor geometry and adjusts the attitude reference, predicting the coupled response under thrust and morphing constraints.</p>
       </div>
     </section>
 
     <section class="method-section" aria-labelledby="method-heading">
       <div class="container section">
-        <div class="section-heading"><p class="eyebrow">The approach</p><h2 id="method-heading">Shape the geometry.<br>Coordinate the response.</h2></div>
+        <div class="section-heading"><p class="eyebrow">The approach</p><h2 id="method-heading">Predictive morphing control</h2></div>
         <div class="method-layout">
           <figure class="platform-figure">
             <img src="./assets/images/platform.webp" width="1800" height="857" alt="The STRIDER experimental platform with four movable rotor modules and an offset payload attachment." loading="lazy">
-            <figcaption>Four movable rotor modules. A shared flight-control objective.</figcaption>
+            <figcaption>Four independently movable rotor modules.</figcaption>
           </figure>
           <div class="method-points">
-            <article><h3>Rotor-position morphing</h3><p>Redistribute rotor loads by changing the moment arms available for thrust allocation.</p></article>
-            <article><h3>Attitude-reference correction</h3><p>Adjust the nominal attitude reference when rapid or large moment demands cannot be handled by morphing alone.</p></article>
-            <article><h3>Predictive coordination</h3><p>Predict the coupled attitude and morphing response while accounting for rotor thrust, workspace, collision-avoidance, and morphing-rate constraints.</p></article>
+            <article><h3>Rotor-position morphing</h3><p>Reshape the allocation geometry to redistribute rotor thrust.</p></article>
+            <article><h3>Attitude-reference correction</h3><p>Reduce transient moment demand while the rotor modules move.</p></article>
+            <article><h3>Predictive coordination</h3><p>Coordinate both actions under thrust and morphing constraints.</p></article>
           </div>
         </div>
       </div>
     </section>
 
     <section class="container section" id="video" aria-labelledby="video-heading">
-      <div class="section-heading heading-inline"><div><p class="eyebrow">Flight experiments</p><h2 id="video-heading">See the controller in flight.</h2></div><p class="section-intro">Thrust redistribution, payload pickup, and lateral transportation.</p></div>
+      <div class="section-heading heading-inline"><div><p class="eyebrow">Flight experiments</p><h2 id="video-heading">Off-center payload transportation</h2></div></div>
       <div class="video-frame" id="video-frame">
         <img src="./assets/images/flight.webp" alt="Still image from STRIDER's flight experiment; the experiment video is forthcoming." width="2345" height="893" loading="lazy">
         <div class="video-placeholder" id="video-placeholder"><span class="media-label">Experiment video</span><p id="video-placeholder-text">Public video forthcoming</p></div>
@@ -90,59 +95,70 @@
       <p class="video-status" id="video-status" role="status">The supplementary video will be available here.</p>
       <div class="chapter-buttons" id="chapter-buttons" aria-label="Video chapters" hidden></div>
       <a class="text-link" id="external-video-link" href="#video" target="_blank" rel="noopener" hidden>Watch on YouTube</a>
-      <div class="experiment-notes">
-        <article><h3>Thrust redistribution</h3><p>Observe how rotor-position changes redistribute the load during hover and lateral motion.</p></article>
-        <article><h3>Payload pickup &amp; transportation</h3><p>See the transient response when an off-center payload is attached and transported.</p></article>
-      </div>
     </section>
 
     <section class="simulation-section" id="simulation" aria-labelledby="simulation-heading">
       <div class="container section">
-        <div class="section-heading heading-inline"><div><p class="eyebrow">Simulation &amp; visualization</p><h2 id="simulation-heading">Explore the flight.<br>Inspect the response.</h2></div><p class="section-intro">A local MuJoCo simulation of the maneuvers studied in the paper, with four controller options and a plotting UI.</p></div>
+        <div class="section-heading"><p class="eyebrow">Simulation</p><h2 id="simulation-heading">Explore STRIDER in MuJoCo</h2></div>
         <div class="gallery-tabs" role="tablist" aria-label="Simulation previews">
           <button type="button" role="tab" id="gallery-tab-scene" aria-controls="gallery-panel" aria-selected="true" data-gallery="scene">MuJoCo scene</button>
           <button type="button" role="tab" id="gallery-tab-plots" aria-controls="gallery-panel" aria-selected="false" tabindex="-1" data-gallery="plots">Plot UI</button>
         </div>
         <div class="simulation-layout">
           <figure id="gallery-panel" role="tabpanel" aria-labelledby="gallery-tab-scene" tabindex="0" class="simulation-figure">
+            <video id="simulation-video" class="simulation-video" muted loop playsinline preload="metadata" controls hidden aria-label="MuJoCo simulation preview"></video>
             <button class="image-zoom" type="button" id="image-zoom" aria-label="Enlarge the MuJoCo scene screenshot">
               <img id="simulation-image" src="./assets/images/simulation.webp" width="1600" height="976" alt="MuJoCo development screenshot showing the STRIDER model carrying an offset payload." loading="lazy">
               <span class="zoom-label">Enlarge image</span>
             </button>
-            <figcaption id="simulation-caption">MuJoCo development preview from the current repository.</figcaption>
+            <figcaption id="simulation-caption">MuJoCo simulation preview.</figcaption>
           </figure>
           <div class="simulation-copy">
-            <article><h3>Follow the maneuver</h3><p>Observe the vehicle and its morphing geometry during the experimental motion scenarios.</p></article>
-            <article><h3>Compare four controllers</h3><p>Explore how different control choices affect the response to an off-center payload.</p></article>
-            <article><h3>Inspect the time histories</h3><p>Use the plotting UI to inspect motion, rotor thrusts, and morphing states.</p></article>
-            <p class="release-note" id="release-note">The curated simulation release is in preparation. The linked repository currently contains the development version.</p>
-            <div class="button-row"><a class="button light" data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener">View repository</a><a class="text-link" id="documentation-link" href="#simulation" target="_blank" rel="noopener" hidden>Installation guide</a></div>
+            <article><h3>Run. Compare. Inspect.</h3><p>Replay payload maneuvers with four controllers. Inspect motion, rotor thrusts, and morphing states in the plotting UI.</p></article>
+            <p class="release-note" id="release-note">Development code available; curated release in preparation.</p>
+            <div class="button-row"><a class="button repository-code" data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18"/></svg><span>Code</span></a><a class="text-link" id="documentation-link" href="#simulation" target="_blank" rel="noopener" hidden>Installation guide</a></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="container section controllers" aria-labelledby="controllers-heading">
-      <div class="section-heading"><p class="eyebrow">Controller comparison</p><h2 id="controllers-heading">Four approaches to the same task.</h2><p class="section-intro">Explore the control strategies included in the planned simulation release.</p></div>
-      <div id="controller-tabs" class="controller-tabs" role="tablist" aria-label="Controller descriptions"></div>
+      <div class="section-heading"><p class="eyebrow">Controller comparison</p><h2 id="controllers-heading">One task. Four controllers.</h2></div>
+      <div id="controller-tabs" class="controller-tabs" role="tablist" aria-label="Controller comparison"></div>
       <div id="controller-panel" class="controller-panel" role="tabpanel" tabindex="0">
-        <div><p class="eyebrow" id="controller-kicker">Full formulation</p><h3 id="controller-name">Proposed</h3><p id="controller-description">Jointly optimizes rotor-position commands and attitude-reference correction within the NMPC prediction horizon.</p></div>
-        <dl id="controller-properties" class="controller-properties"></dl>
+        <figure class="controller-media" id="controller-media" hidden>
+          <video id="controller-video" class="controller-video" muted loop playsinline preload="metadata" controls aria-label="Controller simulation video"></video>
+          <figcaption id="controller-video-status" hidden>Video unavailable.</figcaption>
+        </figure>
+        <div class="controller-copy">
+          <div><p class="eyebrow" id="controller-kicker">Full formulation</p><h3 id="controller-name">Proposed</h3><p id="controller-description">NMPC jointly optimizes rotor-position morphing and attitude-reference correction.</p></div>
+          <dl id="controller-properties" class="controller-properties"></dl>
+        </div>
       </div>
-      <p class="fine-print" id="reference-note">Reference method: gradient-based morphology optimization, based on C. Kim et al., “A morphing quadrotor that can optimize morphology for transportation,” IROS 2021.</p>
+      <p class="fine-print" id="reference-note" hidden>[15] C. Kim et al., “A morphing quadrotor that can optimize morphology for transportation,” IROS 2021.</p>
       <noscript><p>Controller options: Conventional, reference method, Morphing-Only, and Proposed. Enable JavaScript to explore the descriptions.</p></noscript>
     </section>
 
     <section class="publication-section" id="publication" aria-labelledby="publication-heading">
-      <div class="container section publication-layout">
-        <div class="section-heading"><p class="eyebrow">Publication</p><h2 id="publication-heading">Paper &amp; citation</h2><p class="section-intro" id="publication-message">Accepted to IEEE Robotics and Automation Letters. The paper link, author information, DOI, and citation will be added with the publication details.</p><div class="button-row publication-links"><a class="button primary" id="published-paper-link" href="#publication" target="_blank" rel="noopener" hidden>Read paper</a><a class="text-link" id="doi-link" href="#publication" target="_blank" rel="noopener" hidden>DOI</a></div></div>
-        <div class="citation-block"><p id="citation-title">Morph to Survive: Feasibility-Aware MPC for Rotor Thrust Saturation Mitigation in Morphable Multirotors</p><p class="citation-pending" id="citation-pending">Bibliographic details forthcoming</p><p id="citation-text" hidden></p><div id="bibtex-container" hidden><div class="bibtex-header"><span>BibTeX</span><button type="button" id="copy-citation">Copy citation</button></div><pre><code id="bibtex-code"></code></pre><p id="copy-status" role="status" class="fine-print"></p></div></div>
+      <div class="container section" id="bibtex-container">
+        <div class="bibtex-header">
+          <h2 id="publication-heading">BibTeX</h2>
+          <button type="button" id="copy-citation" aria-label="Copy BibTeX">Copy</button>
+        </div>
+        <pre><code id="bibtex-code">@article{ju2026morph,
+  title = {Morph to Survive: Feasibility-Aware {MPC} for Rotor Thrust Saturation Mitigation in Morphable Multirotors},
+  author = {Ju, Jinu and Lee, Dongjae and Shin, Hanryung and Kong, Sunyoung and Kim, Youngjun and Lee, Seung Jae},
+  journal = {IEEE Robotics and Automation Letters},
+  year = {2026},
+  note = {Accepted for publication, November 2026}
+}</code></pre>
+        <p id="copy-status" role="status" class="fine-print" hidden></p>
       </div>
     </section>
   </main>
 
-  <footer class="container site-footer"><a class="brand" href="#main">STRIDER</a><p>Morphable flight. Feasibility-aware control.</p><div><a data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener">GitHub</a><a id="lab-link" href="#main" target="_blank" rel="noopener" hidden>Lab</a><a id="contact-link" href="#main" hidden>Contact</a></div></footer>
+  <footer class="container site-footer"><a class="brand" href="#main">STRIDER</a><p>Morphable flight. Feasibility-aware control.</p><div><a data-code-link href="https://github.com/Milkomedia/STRIDER_MPC_MuJoCo" target="_blank" rel="noopener">GitHub</a><a id="lab-link" href="#main" target="_blank" rel="noopener" hidden>Lab</a><a id="contact-link" href="mailto:seungjae_lee@seoultech.ac.kr">Contact</a></div></footer>
   <dialog id="image-dialog" aria-label="Enlarged simulation screenshot"><form method="dialog"><button class="dialog-close" aria-label="Close enlarged image">Close</button></form><img id="dialog-image" alt=""><p id="dialog-caption"></p></dialog>
-  <noscript><p class="noscript-message">JavaScript is disabled. The overview remains readable; video, image enlargement, and configurable publication links require JavaScript.</p></noscript>
+  <noscript><p class="noscript-message">JavaScript is disabled. The overview and BibTeX remain readable; video chapters, image enlargement, and the Copy button require JavaScript.</p></noscript>
 </body>
 </html>
